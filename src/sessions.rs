@@ -56,8 +56,8 @@ pub(crate) fn get_resurrectable_sessions() -> Vec<(String, Duration, Layout)> {
                             return None;
                         },
                     };
-                    let ctime = match std::fs::metadata(&layout_file_name)
-                        .and_then(|metadata| metadata.created())
+                    let mtime = match std::fs::metadata(&layout_file_name)
+                        .and_then(|metadata| metadata.modified())
                     {
                         Ok(created) => Some(created),
                         Err(_e) => None,
@@ -74,9 +74,9 @@ pub(crate) fn get_resurrectable_sessions() -> Vec<(String, Duration, Layout)> {
                             return None;
                         },
                     };
-                    let elapsed_duration = ctime
-                        .map(|ctime| {
-                            Duration::from_secs(ctime.elapsed().ok().unwrap_or_default().as_secs())
+                    let elapsed_duration = mtime
+                        .map(|mtime| {
+                            Duration::from_secs(mtime.elapsed().ok().unwrap_or_default().as_secs())
                         })
                         .unwrap_or_default();
                     let session_name = folder_name
